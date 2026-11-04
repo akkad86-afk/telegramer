@@ -1,0 +1,10 @@
+{
+  "name": "telegram-news-feed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page that aggregates posts from public Israeli Telegram news channels",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "cheerio": "1.0.0"
+  }
+}
