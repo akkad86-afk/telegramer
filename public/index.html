@@ -276,7 +276,7 @@
     if (!state.data) return;
     renderChips();
     var ts = terms();
-    var posts = state.data.posts.filter(function (p) {
+    var posts = state.data.posts.slice().sort(function (x, y) { return (Date.parse(y.date) || 0) - (Date.parse(x.date) || 0); }).filter(function (p) {
       return (state.filter === 'all' || p.channel === state.filter) && (!ts.length || matches(p, ts));
     });
     feedEl.textContent = '';
