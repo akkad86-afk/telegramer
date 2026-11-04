@@ -327,7 +327,7 @@
     state.loading = true; state.flash = ''; clearTimeout(flashTimer);
     setStatus();
     var t0 = Date.now();
-    return fetch('/api/feed' + (manual === true ? '?r=' + t0 : ''), { cache: 'no-store' })
+    return fetch('/api/feed' + (manual === true ? '?r=' + Math.floor(t0 / 15000) : ''), { cache: 'no-store' })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw j; return j; }); })
       .then(function (j) { state.data = j; state.failed = false; return true; }, function () { return false; })
       .then(function (ok) {
