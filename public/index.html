@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מבזקי טלגרם</title>
 <meta name="description" content="הפוסטים האחרונים מערוצי חדשות ציבוריים בטלגרם, במקום אחד.">
-<meta name="theme-color" content="#e8ecf0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#10161f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1014" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -15,152 +15,240 @@
 <meta name="apple-mobile-web-app-title" content="מבזקים">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Frank+Ruhl+Libre:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #e8ecf0;
+    --bg: #f5f3ee;
     --surface: #ffffff;
-    --ink: #172033;
-    --muted: #5a6677;
-    --line: #d3dae2;
-    --accent: #0b6e6e;
-    --accent-ink: #ffffff;
-    --chip: #f4f6f8;
-    --shadow: 0 1px 0 rgba(23,32,51,.06);
+    --ink: #16181d;
+    --ink-2: #3a3e47;
+    --muted: #6b6f78;
+    --line: #e4e0d8;
+    --rail: #dcd7cc;
+    --link: #0a6a8a;
+    --live: #d92d20;
+    --ok: #2f7d3a;
+    --mark: #ffe58a;
+    --btn: #16181d;
+    --btn-ink: #ffffff;
+    --chip: #ebe8e1;
+    --shadow: 0 1px 2px rgba(22,24,29,.04), 0 6px 20px rgba(22,24,29,.05);
     --c0: #0b6e6e; --c1: #b4491f; --c2: #4a5bb5; --c3: #8a6a00; --c4: #a3366b;
     --c5: #2f7d3a; --c6: #6a4c93; --c7: #1c6fa8; --c8: #7a5a44;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #10161f; --surface: #1a222e; --ink: #e8edf3; --muted: #94a1b3;
-      --line: #2b3646; --accent: #4fc1bd; --accent-ink: #08201f; --chip: #222c3a;
+      --bg: #0e1014; --surface: #171a20; --ink: #eceae4; --ink-2: #c9c7c1; --muted: #9a9ea8;
+      --line: #262a32; --rail: #2c313a; --link: #6cc3e0; --live: #ff5a4e; --ok: #6fc67b;
+      --mark: rgba(255, 214, 90, .38); --btn: #eceae4; --btn-ink: #0e1014; --chip: #1e2229;
       --shadow: none;
       --c0: #4fc1bd; --c1: #f0925f; --c2: #8c9bf0; --c3: #e0bb4a; --c4: #e57fb0;
       --c5: #6fc67b; --c6: #b39ae0; --c7: #63b2ec; --c8: #c9a48c;
     }
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
-    font-family: "Assistant", "Segoe UI", Arial, sans-serif; font-size: 17px; line-height: 1.55;
+    font-family: "Assistant", "Segoe UI", Arial, sans-serif; font-size: 17px; line-height: 1.6;
     padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 700px; margin: 0 auto; padding: 0 16px; }
+  .wrap { max-width: 680px; margin: 0 auto; padding-inline: 16px; }
+  button { font: inherit; }
 
-  /* ---- header: compact on phones, slides away while scrolling down ---- */
+  /* ================= header ================= */
   header {
-    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    position: sticky; top: 0; z-index: 5;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
     border-bottom: 1px solid var(--line);
     padding-top: env(safe-area-inset-top, 0px);
     margin-top: calc(env(safe-area-inset-top, 0px) * -1);
-    transition: transform .25s ease;
+    transition: transform .28s ease;
   }
   header.hide { transform: translateY(-100%); }
-  .bar { display: flex; align-items: center; gap: 10px; padding: 10px 0 6px; }
-  h1 { margin: 0; font-size: 22px; line-height: 1.2; font-weight: 800; letter-spacing: -.01em; flex: none; }
-  .stext { flex: 1; min-width: 0; color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar { display: flex; align-items: center; gap: 10px; padding: 12px 0 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex: none; }
+  h1 {
+    margin: 0; font-family: "Frank Ruhl Libre", Georgia, serif; font-weight: 900;
+    font-size: 25px; line-height: 1.1; letter-spacing: -.01em;
+  }
+  .live {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .04em;
+    color: var(--live); border: 1.5px solid currentColor; border-radius: 999px; padding: 1px 8px 1px 9px; line-height: 1.5;
+  }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; position: relative; }
+  .live i::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%; background: currentColor;
+    animation: ping 1.8s cubic-bezier(0, 0, .2, 1) infinite;
+  }
+  .live.off { color: var(--muted); }
+  .live.off i::after { animation: none; }
+  @keyframes ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
+  .stext { flex: 1; min-width: 0; color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: end; }
+
   .refresh {
-    flex: none; font: inherit; font-size: 15px; font-weight: 600; color: var(--accent-ink); background: var(--accent);
+    flex: none; font-size: 15px; font-weight: 700; color: var(--btn-ink); background: var(--btn);
     border: 0; border-radius: 999px; width: 38px; height: 38px; padding: 0; cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    transition: filter .15s, background-color .2s;
+    transition: transform .12s, background-color .2s, opacity .15s;
   }
-  .refresh:hover:not(:disabled) { filter: brightness(1.12); }
-  .refresh:active:not(:disabled) { filter: brightness(.92); }
+  .refresh:hover:not(:disabled) { opacity: .88; }
+  .refresh:active:not(:disabled) { transform: scale(.96); }
   .refresh:disabled { cursor: progress; }
-  .refresh svg { width: 18px; height: 18px; flex: none; }
+  .refresh svg { width: 17px; height: 17px; flex: none; }
   .refresh .rlabel { display: none; }
   .refresh.loading svg { animation: spin .8s linear infinite; }
-  .refresh.done { background: var(--c5); }
-  .refresh.fail { background: var(--c1); }
+  .refresh.done { background: var(--ok); color: #fff; }
+  .refresh.fail { background: var(--live); color: #fff; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .search { position: relative; padding: 0 0 8px; }
+  .search { position: relative; padding: 0 0 10px; }
+  .search svg {
+    position: absolute; inset-inline-start: 14px; top: 20px; transform: translateY(-50%);
+    width: 17px; height: 17px; color: var(--muted); pointer-events: none;
+  }
   .search input {
     width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: var(--surface);
-    border: 1px solid var(--line); border-radius: 999px; padding: 6px 16px; padding-inline-end: 40px; height: 40px;
-    -webkit-appearance: none; appearance: none;
+    border: 1px solid var(--line); border-radius: 12px; height: 40px;
+    padding: 0 40px; -webkit-appearance: none; appearance: none;
+    transition: border-color .15s, box-shadow .15s;
   }
   .search input::placeholder { color: var(--muted); }
   .search input::-webkit-search-cancel-button { display: none; }
+  .search input:focus { outline: none; border-color: var(--ink-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent); }
   .search .clear {
     position: absolute; inset-inline-end: 5px; top: 20px; transform: translateY(-50%); width: 32px; height: 32px;
     font-size: 20px; line-height: 1; color: var(--muted); background: none; border: 0; border-radius: 50%; cursor: pointer;
   }
+  .search .clear:hover { background: var(--chip); color: var(--ink); }
   .search .clear[hidden] { display: none; }
-  mark { background: color-mix(in srgb, var(--accent) 28%, transparent); color: inherit; border-radius: 2px; }
+  mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1px; }
 
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 12px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    flex: none; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px;
-    color: var(--ink); background: var(--chip); border: 1px solid var(--line); border-radius: 999px;
-    padding: 4px 12px 4px 10px; cursor: pointer;
+    flex: none; display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; font-weight: 600;
+    color: var(--ink-2); background: transparent; border: 1px solid var(--line); border-radius: 999px;
+    padding: 4px 12px 4px 11px; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s;
   }
-  .chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--accent)); display: block; }
-  .chip small { color: var(--muted); font-size: 13px; }
-  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .chip[aria-pressed="true"] small { color: inherit; opacity: .75; }
+  .chip:hover { background: var(--chip); }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--ink)); display: block; }
+  .chip small { color: var(--muted); font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .chip[aria-pressed="true"] { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
+  .chip[aria-pressed="true"] small { color: inherit; opacity: .7; }
+  .chip[aria-pressed="true"] i { box-shadow: 0 0 0 2px var(--btn-ink); }
 
   .chip:focus-visible, .more:focus-visible, .refresh:focus-visible, .newbar:focus-visible, .clear:focus-visible,
-  .search input:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  a:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
 
   @media (min-width: 480px) {
     .refresh { width: auto; padding: 0 16px; }
     .refresh .rlabel { display: inline; }
   }
   @media (min-width: 600px) {
-    h1 { font-size: 28px; }
-    .stext { font-size: 14px; }
-    .bar { padding: 14px 0 8px; }
+    h1 { font-size: 30px; }
+    .stext { font-size: 13.5px; }
+    .bar { padding: 16px 0 12px; }
   }
   @media (min-width: 700px) and (hover: hover) { .chips { flex-wrap: wrap; overflow: visible; } }
 
-  /* ---- feed ---- */
-  main { padding: 16px 0 48px; }
-  .gap-label { color: var(--muted); font-size: 14px; font-weight: 600; margin: 22px 0 8px; }
-  .gap-label:first-child { margin-top: 0; }
-  .notice { color: var(--muted); font-size: 13px; margin: 0 0 14px; padding: 6px 12px; border-radius: 6px; background: var(--chip); border: 1px dashed var(--line); }
+  /* ================= feed: a timeline rail ================= */
+  main { padding-top: 20px; padding-bottom: 40px; }
+  .rail { position: relative; padding-inline-start: 26px; }
+  .rail::before {
+    content: ""; position: absolute; inset-inline-start: 7px; top: 6px; bottom: 0; width: 2px;
+    background: linear-gradient(var(--rail), var(--rail) 85%, transparent);
+  }
+  .gap-label {
+    position: relative; margin: 26px 0 12px; font-size: 13px; font-weight: 800; letter-spacing: .02em; color: var(--muted);
+  }
+  .gap-label::before {
+    content: ""; position: absolute; inset-inline-start: -26px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--rail);
+  }
+  .rail > .gap-label:first-child, .notice + .gap-label { margin-top: 0; }
+
+  .notice {
+    display: flex; gap: 8px; align-items: baseline;
+    color: var(--muted); font-size: 13.5px; margin: 0 0 20px; padding: 8px 12px; border-radius: 10px;
+    background: var(--chip);
+  }
+
   article {
     position: relative; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
-    border-radius: 6px; padding: 12px 18px 12px 14px; margin-bottom: 10px;
-    border-inline-start: 5px solid var(--c, var(--accent));
+    border-radius: 14px; padding: 14px 16px 14px; margin-bottom: 12px;
   }
+  article::before {      /* the dot on the rail */
+    content: ""; position: absolute; inset-inline-start: -25px; top: 24px; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--c, var(--ink)); box-shadow: 0 0 0 3px var(--bg);
+  }
+  article.breaking { border-color: color-mix(in srgb, var(--live) 45%, var(--line)); }
+  article.breaking::before { background: var(--live); }
   article.fresh { animation: fresh 3.5s ease-out; }
-  @keyframes fresh { from { background: color-mix(in srgb, var(--accent) 20%, var(--surface)); } to { background: var(--surface); } }
-  .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; color: var(--muted); }
-  .meta b { color: var(--ink); font-weight: 800; font-size: 15px; }
-  .when { color: var(--muted); text-decoration: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .when span { opacity: .6; margin-inline-start: 4px; }
-  .when:hover { color: var(--accent); text-decoration: underline; }
-  .text { margin: 6px 0 0; white-space: pre-line; overflow-wrap: anywhere; }
-  .text a { color: var(--accent); }
-  .text.clamp { display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
-  .more { font: inherit; font-size: 14px; background: none; border: 0; color: var(--accent); padding: 4px 0 0; cursor: pointer; }
-  .media { position: relative; display: block; margin-top: 10px; border-radius: 4px; overflow: hidden; background: var(--chip); }
-  .media img { display: block; width: 100%; max-height: 420px; object-fit: cover; }
-  .media .vid {
-    position: absolute; inset-inline-start: 8px; bottom: 8px; background: rgba(0,0,0,.72); color: #fff;
-    font-size: 13px; padding: 2px 10px; border-radius: 999px;
+  @keyframes fresh {
+    0% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c, var(--link)) 45%, transparent), var(--shadow); }
+    100% { box-shadow: 0 0 0 3px transparent, var(--shadow); }
   }
-  .empty, .err { text-align: center; color: var(--muted); padding: 48px 0; }
-  .err b { color: var(--ink); display: block; margin-bottom: 4px; }
-  footer { color: var(--muted); font-size: 13px; padding: 8px 0 32px; border-top: 1px solid var(--line); }
-  .skeleton { height: 96px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); margin-bottom: 10px; opacity: .6; }
+
+  .head { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 14px; font-weight: 800; line-height: 1; color: var(--c, var(--ink));
+    background: color-mix(in srgb, var(--c, var(--ink)) 14%, var(--surface));
+  }
+  .who { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+  .who b { font-size: 15.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .when { color: var(--muted); font-size: 13px; text-decoration: none; white-space: nowrap; font-variant-numeric: tabular-nums; margin-top: 2px; width: max-content; }
+  .when span { opacity: .55; margin-inline-start: 4px; }
+  .when:hover { color: var(--link); }
+  .when:hover time { text-decoration: underline; }
+  .tag {
+    flex: none; align-self: flex-start; font-size: 12px; font-weight: 800; color: #fff; background: var(--live);
+    border-radius: 6px; padding: 1px 8px; letter-spacing: .02em;
+  }
+
+  .text { margin: 10px 0 0; white-space: pre-line; overflow-wrap: anywhere; color: var(--ink); }
+  .text a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .text.clamp { display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+  .more {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; background: none; border: 0;
+    color: var(--link); padding: 6px 0 0; cursor: pointer;
+  }
+  .media { position: relative; display: block; margin-top: 12px; border-radius: 10px; overflow: hidden; background: var(--chip); }
+  .media img { display: block; width: 100%; max-height: 440px; object-fit: cover; transition: transform .4s ease; }
+  .media:hover img { transform: scale(1.015); }
+  .media .vid {
+    position: absolute; inset-inline-start: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,.72); color: #fff; font-size: 13px; font-weight: 600; padding: 3px 11px 3px 9px; border-radius: 999px;
+  }
+
+  .empty, .err { text-align: center; color: var(--muted); padding: 56px 16px; }
+  .empty b, .err b { color: var(--ink); display: block; margin-bottom: 4px; font-size: 18px; }
+  footer { color: var(--muted); font-size: 13px; text-align: center; padding: 20px 16px 36px; }
+
+  .skeleton { height: 118px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); margin-bottom: 12px; position: relative; overflow: hidden; }
+  .skeleton::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--chip) 80%, transparent), transparent);
+    animation: shimmer 1.3s infinite; transform: translateX(100%);
+  }
+  @keyframes shimmer { to { transform: translateX(-100%); } }
 
   /* "N new posts" pill */
   .newbar {
     position: fixed; z-index: 10; inset-inline: 0; margin: 0 auto; width: max-content; max-width: calc(100% - 32px);
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    font: inherit; font-size: 15px; font-weight: 600; color: var(--accent-ink); background: var(--accent);
-    border: 0; border-radius: 999px; padding: 9px 20px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.28);
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    font-size: 15px; font-weight: 700; color: var(--btn-ink); background: var(--btn);
+    border: 0; border-radius: 999px; padding: 10px 20px; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(0,0,0,.25); animation: rise .3s ease-out;
   }
   .newbar[hidden] { display: none; }
+  @keyframes rise { from { transform: translateY(12px); opacity: 0; } }
 
   @media (prefers-reduced-motion: reduce) {
-    header { transition: none; }
-    .refresh.loading svg { animation: none; }
-    article.fresh { animation: none; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
@@ -168,7 +256,10 @@
 <header id="top">
   <div class="wrap">
     <div class="bar">
-      <h1>מבזקי טלגרם</h1>
+      <div class="brand">
+        <h1>מבזקי טלגרם</h1>
+        <span class="live" id="live" title="מתעדכן אוטומטית"><i></i>חי</span>
+      </div>
       <span class="stext" id="stext" aria-live="polite">טוען…</span>
       <button type="button" class="refresh" id="refresh" aria-label="רענון">
         <svg id="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
@@ -176,19 +267,22 @@
       </button>
     </div>
     <div class="search">
-      <input type="search" id="q" placeholder="חיפוש בפוסטים…" aria-label="חיפוש בפוסטים" autocomplete="off" enterkeyhint="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" id="q" placeholder="חיפוש בפוסטים" aria-label="חיפוש בפוסטים" autocomplete="off" enterkeyhint="search">
       <button type="button" class="clear" id="qclear" aria-label="נקה חיפוש" hidden>×</button>
     </div>
     <div class="chips" id="chips" role="group" aria-label="סינון לפי ערוץ"></div>
   </div>
 </header>
 
-<main class="wrap" id="feed">
-  <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+<main class="wrap">
+  <div class="rail" id="feed">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
 </main>
 
-<footer class="wrap">
-  הפוסטים שייכים לבעלי הערוצים ומוצגים כאן מהתצוגה הציבורית של טלגרם. כל פוסט מקשר למקור.
+<footer>
+  הפוסטים שייכים לבעלי הערוצים ומוצגים מהתצוגה הציבורית של טלגרם. כל פוסט מקשר למקור.
 </footer>
 
 <button type="button" class="newbar" id="newbar" hidden></button>
@@ -199,12 +293,13 @@
   var TITLE = document.title;
   var state = {
     data: null, pending: null, filter: 'all', query: '', expanded: {}, fresh: {},
-    loading: false, flash: '', incoming: null
+    loading: false, flash: '', incoming: null, lastFailed: false
   };
   var headerEl = document.getElementById('top');
   var chipsEl = document.getElementById('chips');
   var feedEl = document.getElementById('feed');
   var stextEl = document.getElementById('stext');
+  var liveEl = document.getElementById('live');
   var refreshEl = document.getElementById('refresh');
   var ricon = document.getElementById('ricon');
   var rlabel = document.getElementById('rlabel');
@@ -217,15 +312,19 @@
   var compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
   var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function colorOf(handle) {
+  function chanOf(handle) {
     var list = (state.data && state.data.channels) || [];
-    for (var i = 0; i < list.length; i++) if (list[i].handle === handle) return 'var(--c' + (i % 9) + ')';
-    return 'var(--accent)';
+    for (var i = 0; i < list.length; i++) if (list[i].handle === handle) return { i: i, c: list[i] };
+    return null;
   }
-  function titleOf(handle) {
-    var list = (state.data && state.data.channels) || [];
-    for (var i = 0; i < list.length; i++) if (list[i].handle === handle) return list[i].title;
-    return handle;
+  function colorOf(handle) { var f = chanOf(handle); return f ? 'var(--c' + (f.i % 9) + ')' : 'var(--ink)'; }
+  function titleOf(handle) { var f = chanOf(handle); return f ? f.c.title : handle; }
+  // two letters for the avatar: first letter of the first two words
+  function initials(name) {
+    var words = String(name).split(/\s+/).map(function (w) {
+      var m = w.match(/[\p{L}\p{N}]/u); return m ? m[0] : '';
+    }).filter(Boolean);
+    return (words.slice(0, 2).join('') || '?').toUpperCase();
   }
   function rel(date) {
     var s = Math.round((new Date(date) - Date.now()) / 1000), a = Math.abs(s);
@@ -243,12 +342,13 @@
   function bucket(date) {
     var d = new Date(date), now = new Date();
     if (now - d < 3600e3) return 'בשעה האחרונה';
-    if (d.toDateString() === now.toDateString()) return 'היום';
+    if (d.toDateString() === now.toDateString()) return 'מוקדם יותר היום';
     var y = new Date(now); y.setDate(now.getDate() - 1);
     if (d.toDateString() === y.toDateString()) return 'אתמול';
     return dayFmt.format(d);
   }
   function keyOf(p) { return p.channel + '/' + p.id; }
+  var BREAKING_RE = /^[\s🔴🚨❗‼️⚡️*_]*(מבזק|דחוף|breaking|urgent)/i;
 
   /* ---- shareable state in the URL hash: #c=<channel>&q=<search> ---- */
   function readHash() {
@@ -337,20 +437,29 @@
   }
 
   function renderPost(p, ts) {
-    var a = el('article', state.fresh[keyOf(p)] ? 'fresh' : '');
+    var breaking = BREAKING_RE.test(p.text || '');
+    var a = el('article', (state.fresh[keyOf(p)] ? 'fresh' : '') + (breaking ? ' breaking' : ''));
     a.style.setProperty('--c', colorOf(p.channel));
-    var meta = el('div', 'meta');
-    meta.appendChild(el('b', null, titleOf(p.channel)));
+
+    var head = el('div', 'head');
+    var title = titleOf(p.channel);
+    var av = el('span', 'avatar', initials(title));
+    av.setAttribute('aria-hidden', 'true');
+    head.appendChild(av);
+    var who = el('div', 'who');
+    who.appendChild(el('b', null, title));
     var link = document.createElement('a');
     link.className = 'when'; link.href = p.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
     link.title = 'פתיחה בטלגרם';
-    var t = el('time', null, p.date ? rel(p.date) + ', ' + clock.format(new Date(p.date)) : 'פתיחה בטלגרם');
+    var t = el('time', null, p.date ? rel(p.date) + ' · ' + clock.format(new Date(p.date)) : 'פתיחה בטלגרם');
     if (p.date) t.dateTime = p.date;
     link.appendChild(t);
-    link.appendChild(el('span', null, '↗'));
-    link.lastChild.setAttribute('aria-hidden', 'true');
-    meta.appendChild(link);
-    a.appendChild(meta);
+    var arrow = el('span', null, '↗'); arrow.setAttribute('aria-hidden', 'true');
+    link.appendChild(arrow);
+    who.appendChild(link);
+    head.appendChild(who);
+    if (breaking) head.appendChild(el('span', 'tag', 'מבזק'));
+    a.appendChild(head);
 
     if (p.text) {
       var long = p.text.length > 420 || p.text.split('\n').length > 7;
@@ -360,7 +469,7 @@
       txt.dir = 'auto';
       a.appendChild(txt);
       if (long) {
-        var more = el('button', 'more', state.expanded[key] ? 'הצג פחות' : 'הצג עוד');
+        var more = el('button', 'more', state.expanded[key] ? 'הצג פחות ▴' : 'הצג עוד ▾');
         more.type = 'button';
         more.onclick = function () { state.expanded[key] = !state.expanded[key]; render(); };
         a.appendChild(more);
@@ -374,7 +483,7 @@
       img.src = p.image; img.alt = ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
       img.onerror = function () { m.remove(); };
       m.appendChild(img);
-      if (p.hasVideo) m.appendChild(el('span', 'vid', 'וידאו בטלגרם'));
+      if (p.hasVideo) m.appendChild(el('span', 'vid', '▶ וידאו בטלגרם'));
       a.appendChild(m);
     }
     return a;
@@ -395,12 +504,17 @@
     var bad = chans.filter(function (c) { return !c.ok; });
     if (bad.length) {
       var names = bad.map(function (c) { return c.title; }).join(', ');
-      var n = el('div', 'notice', (bad.length === 1 ? 'ערוץ אחד לא זמין כרגע: ' : bad.length + ' ערוצים לא זמינים כרגע: ') + names);
+      var n = el('div', 'notice');
+      n.appendChild(el('span', null, '⚠')).setAttribute('aria-hidden', 'true');
+      n.appendChild(el('span', null, (bad.length === 1 ? 'ערוץ אחד לא זמין כרגע: ' : bad.length + ' ערוצים לא זמינים כרגע: ') + names));
       n.title = bad.map(function (c) { return c.title + ' – ' + (c.error || ''); }).join('\n');
       feedEl.appendChild(n);
     }
     if (!posts.length) {
-      feedEl.appendChild(el('div', 'empty', ts.length ? 'לא נמצאו פוסטים שמתאימים לחיפוש.' : 'אין פוסטים להצגה בערוץ הזה כרגע.'));
+      var e = el('div', 'empty');
+      e.appendChild(el('b', null, ts.length ? 'לא נמצאו תוצאות' : 'אין פוסטים כרגע'));
+      e.appendChild(document.createTextNode(ts.length ? 'נסו מילה אחרת, או בחרו "הכל".' : 'אין פוסטים להצגה בערוץ הזה כרגע.'));
+      feedEl.appendChild(e);
       return;
     }
     var last = null;
@@ -422,13 +536,15 @@
     var latest = state.pending || state.data;
     var text = '';
     if (state.loading) text = state.data ? 'מרענן…' : 'טוען…';
-    else if (state.flash === 'fail') text = state.data ? 'הרענון נכשל, מוצגים נתונים קודמים' : '';
+    else if (state.flash === 'fail') text = state.data ? 'הרענון נכשל' : '';
     else if (latest) {
       var ok = latest.channels.filter(function (c) { return c.ok; }).length;
       text = 'עודכן ' + clock.format(new Date(latest.updated)) + ' · ' + ok + ' ערוצים';
     }
     stextEl.textContent = text;
-    var label = state.loading ? 'מרענן' : state.flash === 'done' ? 'עודכן ✓' : state.flash === 'fail' ? 'נסו שוב' : 'רענון';
+    liveEl.className = 'live' + (state.lastFailed ? ' off' : '');
+    liveEl.title = state.lastFailed ? 'הרענון האחרון נכשל' : 'מתעדכן אוטומטית כל 2 דקות';
+    var label = state.loading ? 'מרענן' : state.flash === 'done' ? 'עודכן' : state.flash === 'fail' ? 'נסו שוב' : 'רענון';
     refreshEl.className = 'refresh' + (state.loading ? ' loading' : '') + (state.flash ? ' ' + state.flash : '');
     refreshEl.disabled = state.loading;
     refreshEl.setAttribute('aria-label', label);
@@ -490,6 +606,7 @@
       })
       .then(function (ok) {
         state.loading = false;
+        state.lastFailed = !ok;
         if (ok) {
           var j = state.incoming, n = newCount(j);
           if (manual === true) setFlash('done');
