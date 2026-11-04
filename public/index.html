@@ -46,10 +46,22 @@
   .wrap { max-width: 700px; margin: 0 auto; padding: 0 16px; }
   .bar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 0 8px; }
   h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.01em; }
-  .status { color: var(--muted); font-size: 14px; white-space: nowrap; }
-  .status button {
-    font: inherit; color: var(--accent); background: none; border: 0; padding: 0 4px; cursor: pointer; text-decoration: underline;
+  .bar { flex-wrap: wrap; align-items: center; }
+  .status { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 10px; }
+  .refresh {
+    font: inherit; font-size: 15px; font-weight: 600; color: var(--accent-ink); background: var(--accent);
+    border: 0; border-radius: 999px; padding: 6px 16px; min-height: 36px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px; transition: filter .15s, background-color .2s;
   }
+  .refresh:hover:not(:disabled) { filter: brightness(1.12); }
+  .refresh:active:not(:disabled) { filter: brightness(.92); }
+  .refresh:disabled { cursor: progress; }
+  .refresh svg { width: 16px; height: 16px; flex: none; }
+  .refresh.loading svg { animation: spin .8s linear infinite; }
+  .refresh.done { background: var(--c5); }
+  .refresh.fail { background: var(--c1); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .refresh.loading svg { animation: none; } }
   .search { position: relative; padding: 2px 0 8px; }
   .search input {
     width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: var(--surface);
@@ -78,7 +90,8 @@
   .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   .chip[aria-pressed="true"] small { color: inherit; opacity: .75; }
   .chip.off { opacity: .45; cursor: default; text-decoration: line-through; }
-  .chip:focus-visible, .more:focus-visible, .status button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  @media (min-width: 700px) and (hover: hover) { .chips { flex-wrap: wrap; overflow: visible; } }
+  .chip:focus-visible, .more:focus-visible, .refresh:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
   main { padding: 16px 0 48px; }
   .gap-label { color: var(--muted); font-size: 14px; font-weight: 600; margin: 22px 0 8px; }
@@ -133,7 +146,7 @@
 <script>
 (function () {
   var REFRESH_MS = 120000;
-  var state = { data: null, filter: 'all', query: '', expanded: {}, failed: false };
+  var state = { data: null, filter: 'all', query: '', expanded: {}, failed: false, loading: false, flash: '' };
   var chipsEl = document.getElementById('chips');
   var feedEl = document.getElementById('feed');
   var statusEl = document.getElementById('status');
@@ -279,30 +292,65 @@
     });
   }
 
+  var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+  var flashTimer;
+
   function setStatus() {
     statusEl.textContent = '';
-    if (state.data) {
+    var text = '';
+    if (state.loading) text = state.data ? 'מרענן…' : 'טוען…';
+    else if (state.flash === 'fail') text = state.data ? 'הרענון נכשל, מוצגים נתונים קודמים' : '';
+    else if (state.data) {
       var ok = state.data.channels.filter(function (c) { return c.ok; }).length;
-      statusEl.appendChild(document.createTextNode('עודכן ' + clock.format(new Date(state.data.updated)) + ', ' + ok + ' ערוצים '));
+      text = 'עודכן ' + clock.format(new Date(state.data.updated)) + ' · ' + ok + ' ערוצים';
     }
-    var b = el('button', null, 'רענון');
+    if (text) statusEl.appendChild(el('span', null, text));
+    var b = el('button', 'refresh' + (state.loading ? ' loading' : '') + (state.flash ? ' ' + state.flash : ''));
     b.type = 'button';
-    b.onclick = load;
+    b.innerHTML = ICON;
+    b.appendChild(document.createTextNode(
+      state.loading ? 'מרענן' : state.flash === 'done' ? 'עודכן ✓' : state.flash === 'fail' ? 'נסו שוב' : 'רענון'));
+    b.disabled = state.loading;
+    b.onclick = function () { load(true); };
     statusEl.appendChild(b);
   }
 
-  function load() {
-    return fetch('/api/feed', { cache: 'no-store' })
+  function setFlash(kind) {
+    state.flash = kind;
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { state.flash = ''; setStatus(); }, kind === 'fail' ? 6000 : 2500);
+  }
+
+  // manual = user pressed the button: bypass the 2-minute edge cache and confirm visibly
+  function load(manual) {
+    if (state.loading) return Promise.resolve();
+    state.loading = true; state.flash = ''; clearTimeout(flashTimer);
+    setStatus();
+    var t0 = Date.now();
+    return fetch('/api/feed' + (manual === true ? '?r=' + t0 : ''), { cache: 'no-store' })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw j; return j; }); })
-      .then(function (j) { state.data = j; state.failed = false; setStatus(); render(); })
-      .catch(function (e) {
-        if (state.data) { statusEl.textContent = 'הרענון נכשל, מוצגים נתונים קודמים. '; statusEl.appendChild(el('button', null, 'נסו שוב')).onclick = load; return; }
-        feedEl.textContent = '';
-        var box = el('div', 'err');
-        box.appendChild(el('b', null, 'לא הצלחנו לטעון פוסטים'));
-        box.appendChild(document.createTextNode('טלגרם לא החזיר נתונים מאף ערוץ. נסו שוב בעוד רגע.'));
-        feedEl.appendChild(box);
-        setStatus();
+      .then(function (j) { state.data = j; state.failed = false; return true; }, function () { return false; })
+      .then(function (ok) {
+        // keep the spinner visible long enough to notice
+        var wait = manual === true ? Math.max(0, 600 - (Date.now() - t0)) : 0;
+        return new Promise(function (res) { setTimeout(function () { res(ok); }, wait); });
+      })
+      .then(function (ok) {
+        state.loading = false;
+        if (ok) {
+          if (manual === true) setFlash('done');
+          setStatus(); render();
+        } else {
+          if (state.data) setFlash('fail');
+          else {
+            feedEl.textContent = '';
+            var box = el('div', 'err');
+            box.appendChild(el('b', null, 'לא הצלחנו לטעון פוסטים'));
+            box.appendChild(document.createTextNode('טלגרם לא החזיר נתונים מאף ערוץ. נסו שוב בעוד רגע.'));
+            feedEl.appendChild(box);
+          }
+          setStatus();
+        }
       });
   }
 
